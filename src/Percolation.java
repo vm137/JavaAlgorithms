@@ -2,15 +2,25 @@ import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.QuickFindUF;
 
 public class Percolation {
-    private int MaxN;
-    private int[][] Matrix;
+    private int MaxN, P, Q;
+    private QuickFindUF UFarray;
 
 
     public Percolation(int n) {
-        System.out.println("Percolation constructor " + n);
+        System.out.println("Percolation constructor (x" + n + ")");
         MaxN = n;
-        Matrix = new int[MaxN][MaxN];
+        P = MaxN * MaxN + 1;
+        Q = MaxN * MaxN + 2;
+        UFarray = new QuickFindUF(MaxN * MaxN + 2);
 
+        System.out.println(UFarray.count());
+        UFarray.union(5,6);
+        UFarray.union(5,7);
+        System.out.println(UFarray.count());
+
+        System.out.println(UFarray.find(5));
+        System.out.println(UFarray.connected(5,6));
+        System.out.println(UFarray.connected(5,8));
 
         int row, col, c = 0; // TODO: c - temp
 
@@ -26,15 +36,17 @@ public class Percolation {
 
     }
 
-    public void open(int row, int col) { Matrix[row][col] = 1; }
-    public boolean isOpen(int row, int col) { return (boolean)(Matrix[row][col] >= 1); } // is site (row, col) open?
-    public boolean isFull(int row, int col) { return (boolean)(Matrix[row][col] == 2); } // is site (row, col) full?
+    public void open(int row, int col) {  }
+
+    public boolean isOpen(int row, int col) { return true; }
+
+    public boolean isFull(int row, int col) { return true; }
 
     public int numberOfOpenSites() {
         int count = 0;
         for (int row = 0; row < MaxN; row++) {
             for (int col = 0; col < MaxN; col++) {
-                if (Matrix[row][col] >= 1) count++;
+                // if (Matrix[row][col] >= 1) count++;
             }
         }
         return count;
@@ -51,7 +63,7 @@ public class Percolation {
     private void visualizeMatrix() {
         for (int row = 0; row < MaxN; row++) {
             for (int col = 0; col < MaxN; col++) {
-                System.out.print(Matrix[row][col]);
+                // System.out.print(Matrix[row][col]);
             }
             System.out.print("\n");
         }
@@ -63,7 +75,7 @@ public class Percolation {
         Percolation p = new Percolation(6);
         p.visualizeMatrix();
 
-        System.out.println("open sites: " + p.numberOfOpenSites());
+        // System.out.println("open sites: " + p.numberOfOpenSites());
     }
 
 }
