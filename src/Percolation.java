@@ -9,17 +9,13 @@ public class Percolation {
     private QuickFindUF UFstruct;
 
     public Percolation(int n) {
-        System.out.println("Percolation constructor (x" + n + ")");
         MaxN = n;
         P = MaxN * MaxN;
         Q = MaxN * MaxN + 1;
         UFstruct = new QuickFindUF(MaxN * MaxN + 2);
         Matrix = new int[MaxN + 1][MaxN + 1];
 
-        System.out.println("initial counts: " + (UFstruct.count() - 2));
-
         int row, col;
-
         while (!percolates()) {
             row = StdRandom.uniform(MaxN) + 1;
             col = StdRandom.uniform(MaxN) + 1;
@@ -31,7 +27,6 @@ public class Percolation {
     }
 
     public void open(int row, int col) {
-
         Matrix[row][col] = 1;
 
         // P
@@ -68,7 +63,6 @@ public class Percolation {
     }
 
     private void makeFull(int row, int col) {
-
         if (row == 1
                 || isValid(row - 1, col) && isFull(row - 1, col)
                 || isValid(row, col - 1) && isFull(row, col - 1)
@@ -126,8 +120,9 @@ public class Percolation {
     }
 
     public static void main(String[] args) {
-
-        Percolation p = new Percolation(10);
+        int n = 10;
+        Percolation p = new Percolation(n);
+        System.out.println("Percolation constructor (x" + n + ")\n");
 
         p.visualizeMatrix();
         System.out.println("percolates with : " + p.numberOfOpenSites() + " sites");
