@@ -1,18 +1,19 @@
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
+import java.lang.IllegalArgumentException;
 import edu.princeton.cs.algs4.StdRandom;
-import edu.princeton.cs.algs4.QuickFindUF;
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private int MaxN, P, Q;
     private int[][] Matrix; // 0 - closed, 1 - open, 2 - full
-    private QuickFindUF UFstruct;
+    private WeightedQuickUnionUF UFstruct;
 
     public Percolation(int n) {
+        if (n <= 0) { throw new IllegalArgumentException(); }
+
         MaxN = n;
         P = MaxN * MaxN;
         Q = MaxN * MaxN + 1;
-        UFstruct = new QuickFindUF(MaxN * MaxN + 2);
+        UFstruct = new WeightedQuickUnionUF(MaxN * MaxN + 2);
         Matrix = new int[MaxN + 1][MaxN + 1];
 
         int row, col;
@@ -27,6 +28,8 @@ public class Percolation {
     }
 
     public void open(int row, int col) {
+        checkIfValid(row, col);
+
         Matrix[row][col] = 1;
 
         // P
@@ -93,13 +96,24 @@ public class Percolation {
         return (row >= 1 && row <= MaxN) && (col >= 1 && col <= MaxN);
     }
 
+    private void checkIfValid(int row, int col) {
+        if ((row < 1 || row > MaxN) || (col < 1 || col > MaxN))
+            throw new IllegalArgumentException();
+    }
+
     private int rowColTo1D (int row, int col) {
         return (row - 1) * MaxN + (col - 1 );
     }
 
-    public boolean isOpen(int row, int col) { return (Matrix[row][col] >= 1); }
+    public boolean isOpen(int row, int col) {
+        checkIfValid(row, col);
+        return (Matrix[row][col] >= 1);
+    }
 
-    public boolean isFull(int row, int col) { return (Matrix[row][col] == 2); }
+    public boolean isFull(int row, int col) {
+        checkIfValid(row, col);
+        return (Matrix[row][col] == 2);
+    }
 
     public int numberOfOpenSites() {
         return UFstruct.count() - 2;
@@ -109,7 +123,7 @@ public class Percolation {
         return UFstruct.connected(P, Q);
     }
 
-    private void visualizeMatrix() {
+    public void visualizeMatrix() {
         for (int row = 1; row <= MaxN; row++) {
             for (int col = 1; col <= MaxN; col++) {
                 System.out.print(Matrix[row][col]);
@@ -125,7 +139,7 @@ public class Percolation {
         System.out.println("Percolation constructor (x" + n + ")\n");
 
         p.visualizeMatrix();
-        System.out.println("percolates with : " + p.numberOfOpenSites() + " sites");
+        System.out.println("percolates with: " + p.numberOfOpenSites() + " sites of " + n * n + " (" + ((n * n - p.numberOfOpenSites()) / (n * n * 1.0)) + ")");
     }
 
 }
