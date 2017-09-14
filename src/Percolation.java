@@ -41,7 +41,10 @@ public class Percolation {
 
         // checking for nearby cites - then .union() with them
 
-        if (isValid(row - 1, col))
+        // top
+        if (isValid(row - 1, col) && isOpen(row - 1, col)) {
+            UFstruct.union(rowColTo1D(row, col), rowColTo1D(row - 1, col));
+        }
 
         // checking if full ...
         // if connected with other full - and then look for spreading
@@ -65,15 +68,43 @@ public class Percolation {
 
     }
 
+    private void connect(int pRow, int pCol, int qRow, int qCol) {
+        if (isValid(pRow, pCol) && isOpen(pRow, pCol) && isValid(qRow, qCol) && isOpen(qRow, qCol)) {
+            UFstruct.union(rowColTo1D(pRow, pCol), rowColTo1D(pRow, pCol));
+        }
+
+        // check if exist & open and not connected - left, top, right, bottom
+        // .connect((qRow, qCol), (that))
+        //
+    }
+
     private boolean isValid (int row, int col) {
         return (row >= 1 && row <= MaxN) && (col >= 1 && col <= MaxN);
     }
 
-    private void flooding() {
+    private void flooding() { // add recursion
+        int row = 1, col = 1;
+
+        while (row < MaxN + 1) {
+            while (col < MaxN + 1) {
+                makeFull(row, col);
+            }
+
+        }
+
         // going from top to bottom row
         // left and right each row
         // making ajacent elements - full (=2)
     }
+
+
+    private void makeFull(int row, int col) {
+        Matrix[row][col] = 2;
+
+        // if there exist left, right, top, bottom exists and not full
+        // call .makeFull(that row, that col)
+    }
+
 
     private int rowColTo1D (int row, int col) {
         return (row -1) * MaxN + (col -1 );
