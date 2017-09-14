@@ -116,7 +116,7 @@ public class Percolation {
     }
 
     public int numberOfOpenSites() {
-        return UFstruct.count() - 2;
+        return MaxN * MaxN - (UFstruct.count() - 2);
     }
 
     public boolean percolates() {
@@ -139,7 +139,7 @@ public class Percolation {
         System.out.println("Percolation constructor (x" + n + ")\n");
 
         p.visualizeMatrix();
-        System.out.println("percolates with: " + p.numberOfOpenSites() + " sites of " + n * n + " (" + ((n * n - p.numberOfOpenSites()) / (n * n * 1.0)) + ")");
+        System.out.println("percolates with: " + p.numberOfOpenSites() + " sites of " + n * n + " (" + ((p.numberOfOpenSites()) / (n * n * 1.0)) + ")");
     }
 
 }
