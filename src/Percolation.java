@@ -11,27 +11,22 @@ public class Percolation {
     public Percolation(int n) {
         System.out.println("Percolation constructor (x" + n + ")");
         MaxN = n;
-        P = MaxN * MaxN + 1;
-        Q = MaxN * MaxN + 2;
+        P = MaxN * MaxN;
+        Q = MaxN * MaxN + 1;
         UFstruct = new QuickFindUF(MaxN * MaxN + 2);
         Matrix = new int[MaxN + 1][MaxN + 1];
 
-        System.out.println("inital counts: " + (UFstruct.count() - 2));
+        System.out.println("initial counts: " + (UFstruct.count() - 2));
 
-        ///////////////////////////
+        int row, col;
 
-        int row, col, c = 0; // TODO: c - temp
-
-        while (c++ < 30) { // while (!percolates())
+        while (!percolates()) {
             row = StdRandom.uniform(MaxN) + 1;
             col = StdRandom.uniform(MaxN) + 1;
 
             if (!isOpen(row, col)) {
                 open(row, col);
-            };
-
-            // check if cite is full
-            if (row == 1) Matrix[row][col] = 2;
+            }
         }
     }
 
@@ -39,75 +34,73 @@ public class Percolation {
 
         Matrix[row][col] = 1;
 
-        // checking for nearby cites - then .union() with them
+        // P
+        if (row == 1) {
+            UFstruct.union(rowColTo1D(row, col), P);
+        }
 
         // top
         if (isValid(row - 1, col) && isOpen(row - 1, col)) {
             UFstruct.union(rowColTo1D(row, col), rowColTo1D(row - 1, col));
         }
 
-        // checking if full ...
-        // if connected with other full - and then look for spreading
-
-
-        UFstruct.union(5, 6);
-        UFstruct.union(5, 7);
-
-        // find if row == 0 then full
-        // then check if connected to this elements
-
-        // UFstruct.union(int p, int q)/
-        // .connected(int p, int q)
-        //
-
-//        System.out.println(UFstruct.connected(5,6));
-//        System.out.println(UFstruct.connected(5,8));
-
-        // if top row - .union() with P
-        // if bottom row - .union() with Q
-
-    }
-
-    private void connect(int pRow, int pCol, int qRow, int qCol) {
-        if (isValid(pRow, pCol) && isOpen(pRow, pCol) && isValid(qRow, qCol) && isOpen(qRow, qCol)) {
-            UFstruct.union(rowColTo1D(pRow, pCol), rowColTo1D(pRow, pCol));
+        // right
+        if (isValid(row, col + 1) && isOpen(row, col + 1)) {
+            UFstruct.union(rowColTo1D(row, col), rowColTo1D(row, col + 1));
         }
 
-        // check if exist & open and not connected - left, top, right, bottom
-        // .connect((qRow, qCol), (that))
-        //
+        // bottom
+        if (isValid(row + 1, col) && isOpen(row + 1, col)) {
+            UFstruct.union(rowColTo1D(row, col), rowColTo1D(row + 1, col));
+        }
+
+        // left
+        if (isValid(row, col - 1) && isOpen(row, col - 1)) {
+            UFstruct.union(rowColTo1D(row, col), rowColTo1D(row, col - 1));
+        }
+
+        // Q
+        if (row == MaxN) {
+            UFstruct.union(rowColTo1D(row, col), Q);
+        }
+
+        makeFull(row, col);
+    }
+
+    private void makeFull(int row, int col) {
+
+        if (row == 1
+                || isValid(row - 1, col) && isFull(row - 1, col)
+                || isValid(row, col - 1) && isFull(row, col - 1)
+                || isValid(row + 1, col) && isFull(row + 1, col)
+                || isValid(row, col + 1) && isFull(row, col + 1)) {
+
+            Matrix[row][col] = 2;
+
+            if (isValid(row - 1, col) && isOpen(row - 1, col) && !isFull(row - 1, col)) {
+                makeFull(row - 1, col);
+            }
+
+            if (isValid(row, col - 1) && isOpen(row, col - 1) && !isFull(row, col - 1)) {
+                makeFull(row, col - 1);
+            }
+
+            if (isValid(row + 1, col) && isOpen(row + 1, col) && !isFull(row + 1, col)) {
+                makeFull(row + 1, col);
+            }
+
+            if (isValid(row, col + 1) && isOpen(row, col + 1) && !isFull(row, col + 1)) {
+                makeFull(row, col + 1);
+            }
+        }
     }
 
     private boolean isValid (int row, int col) {
         return (row >= 1 && row <= MaxN) && (col >= 1 && col <= MaxN);
     }
 
-    private void flooding() { // add recursion
-        int row = 1, col = 1;
-
-        while (row < MaxN + 1) {
-            while (col < MaxN + 1) {
-                makeFull(row, col);
-            }
-
-        }
-
-        // going from top to bottom row
-        // left and right each row
-        // making ajacent elements - full (=2)
-    }
-
-
-    private void makeFull(int row, int col) {
-        Matrix[row][col] = 2;
-
-        // if there exist left, right, top, bottom exists and not full
-        // call .makeFull(that row, that col)
-    }
-
-
     private int rowColTo1D (int row, int col) {
-        return (row -1) * MaxN + (col -1 );
+        return (row - 1) * MaxN + (col - 1 );
     }
 
     public boolean isOpen(int row, int col) { return (Matrix[row][col] >= 1); }
@@ -134,10 +127,10 @@ public class Percolation {
 
     public static void main(String[] args) {
 
-        Percolation p = new Percolation(6);
+        Percolation p = new Percolation(10);
 
         p.visualizeMatrix();
-        System.out.println("open sites when percolates: " + p.numberOfOpenSites());
+        System.out.println("percolates with : " + p.numberOfOpenSites() + " sites");
     }
 
 }
