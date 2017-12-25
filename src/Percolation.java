@@ -53,7 +53,12 @@ public class Percolation {
 
         // qq
         if (row == maxN) {
-            ufstruct.union(rowColTo1D(row, col), qq);
+            if (isOpen(row - 1, col) && isFull(row - 1, col)
+                    || (isValid(row, col - 1) && isFull(row, col - 1))
+                    || (isValid(row, col + 1) && isFull(row, col + 1))) {
+                ufstruct.union(rowColTo1D(row, col), qq);
+            }
+
         }
 
     }
